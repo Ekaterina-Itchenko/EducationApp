@@ -1,13 +1,13 @@
-import datetime
-from django.db.models import Count
-from rest_framework.generics import ListAPIView, UpdateAPIView
-from core.models import Product, Group
 from core.api_v1.serializers import ProductInfoSerializer, GroupSerializer
 from core.api_v1.serializers import AddUserSerializer
+from core.common import distribute_pupiles_in_groups
+from core.models import Product, Group
+import datetime
+from django.db.models import Count
 from django.contrib.auth import get_user_model
+from rest_framework.generics import ListAPIView, UpdateAPIView
 from rest_framework.response import Response
 from rest_framework.status import HTTP_400_BAD_REQUEST
-from core.common import distribute_pupiles_in_groups
 from rest_framework.views import APIView
 
 
@@ -15,6 +15,8 @@ class ProductAPIView(ListAPIView):
     serializer_class = ProductInfoSerializer
  
     def get_queryset(self):
+        '''Get product common information with amount of lessons.'''
+
         query_result = (
         Product.objects.filter(start_date__gte=datetime.date.today())
         .select_related("author")
@@ -28,6 +30,8 @@ class AddUserInProductAPIView(UpdateAPIView):
     serializer_class = AddUserSerializer
 
     def patch(self, request, product_id, *args, **kwargs):
+        '''Get access to the product.'''
+
         serializer = AddUserSerializer(data=request.data)
         if serializer.is_valid():
             data = serializer.validated_data
@@ -48,6 +52,11 @@ class AddUserInProductAPIView(UpdateAPIView):
 class DistributeUsersAPIView(APIView):
  
     def get(self, request, product_id):
+        '''
+        Distribution of students into groups of product.
+        Return list of groups.
+        '''
+
         groups = Group.objects.filter(product__id=product_id)
         users = (
             get_user_model().objects

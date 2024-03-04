@@ -4,6 +4,8 @@ from EducationApp.utils import query_debugger
 
 @query_debugger
 def distribute_pupiles_in_groups(groups: QuerySet, users: QuerySet) -> None:
+    '''Dictribute pupiles, who has access to the particular product, into groups of a product.'''
+
     groups_number = groups.count()
     users_number = users.count()
     min_amount_per_group = users_number // groups_number

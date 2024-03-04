@@ -2,7 +2,10 @@ from core.models import Group
 from django.contrib.auth import get_user_model
 from django.db.models import Count
 
+
 def user_saved_as_available(sender, instance, action, pk_set, **kwargs) -> None:
+    '''Add user into group of product with maximum amount of members.'''
+
     if action in ("post_add",):
         selected_groups = (
             Group.objects.filter(product__id=instance.pk)

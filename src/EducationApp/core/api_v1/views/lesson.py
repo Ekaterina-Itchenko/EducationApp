@@ -1,4 +1,4 @@
-from core.models import Lesson, Product
+from core.models import Lesson
 from core.api_v1.serializers import LessonInfoSerializer
 from rest_framework import views
 from rest_framework.response import Response
@@ -7,6 +7,8 @@ from rest_framework.response import Response
 class LessonAPIView(views.APIView):
     
     def get(self, request, product_id, user_id, format=None):
+        '''Get list of lessons to which the user has access'''
+
         query_result = (
             Lesson.objects
             .select_related("product")
